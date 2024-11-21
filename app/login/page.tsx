@@ -1,13 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { handleUserLogin } from "../actions/login";
+import { redirect } from "next/navigation";
+import { Toaster, toast } from "sonner";
 
 export default function LoginPage() {
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      redirect("/sales");
+    }
+  }, []);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+  }, [error]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,8 +44,15 @@ export default function LoginPage() {
       return;
     }
 
-    // Here you would typically handle the login logic
-    console.log("Login attempt with:", { email, password });
+    handleUserLogin(email, password).then((token) => {
+      if (token) {
+        toast.success("Login successful!");
+        localStorage.setItem("token", token);
+        redirect("/sales");
+      } else {
+        setError("Invalid email or password. Please try again.");
+      }
+    });
   };
 
   return (
@@ -89,32 +112,6 @@ export default function LoginPage() {
               </button>
             </div>
           </div>
-
-          {error && (
-            <div className="rounded-md bg-red-50 p-4">
-              <div className="flex">
-                <div className="flex-shrink-0">
-                  <svg
-                    className="h-5 w-5 text-red-400"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </div>
-                <div className="ml-3">
-                  <h3 className="text-sm font-medium text-red-800">{error}</h3>
-                </div>
-              </div>
-            </div>
-          )}
-
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <input
@@ -151,6 +148,7 @@ export default function LoginPage() {
           </div>
         </form>
         <div className="text-center">
+          <Toaster />
           <p className="text-sm text-gray-600">
             Do not have an account?
             <a

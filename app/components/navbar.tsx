@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Droplet, Menu, X } from "lucide-react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 const Navbar = () => {
   const [activeSection, setActiveSection] = useState("daily-sales");
@@ -20,22 +21,30 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden sm:flex sm:items-center sm:space-x-8">
-            {["Daily Sales", "Live Stock", "Create Sale"].map((item) => (
-              <Link
-                key={item}
-                href="#"
-                className={`text-sm font-medium ${
-                  activeSection === item.toLowerCase().replace(" ", "-")
-                    ? "text-blue-600 border-b-2 border-blue-600"
-                    : "text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                } px-3 py-2`}
-                onClick={() =>
-                  setActiveSection(item.toLowerCase().replace(" ", "-"))
-                }
-              >
-                {item}
-              </Link>
-            ))}
+            {["Daily Sales", "Live Stock", "Create Sale", "Logout"].map(
+              (item) => (
+                <Link
+                  key={item}
+                  href="#"
+                  className={`text-sm font-medium ${
+                    activeSection === item.toLowerCase().replace(" ", "-")
+                      ? "text-blue-600 border-b-2 border-blue-600"
+                      : "text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                  } px-3 py-2`}
+                  onClick={() => {
+                    const section = item.toLowerCase().replace(" ", "-");
+                    if (section === "logout") {
+                      localStorage.removeItem("token");
+                      redirect("/login");
+                    } else {
+                      setActiveSection(section);
+                    }
+                  }}
+                >
+                  {item}
+                </Link>
+              )
+            )}
           </div>
 
           {/* Mobile Menu Toggle */}
