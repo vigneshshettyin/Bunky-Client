@@ -78,7 +78,12 @@ const Navbar = () => {
                     : "border-transparent text-gray-500 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300"
                 } text-base font-medium`}
                 onClick={() => {
-                  setActiveSection(item.toLowerCase().replace(" ", "-"));
+                  const section = item.toLowerCase().replace(" ", "-");
+                  if (section === "logout") {
+                    localStorage.removeItem("token");
+                    redirect("/login");
+                  }
+                  setActiveSection(section);
                   setIsMobileMenuOpen(false);
                 }}
               >
