@@ -1,15 +1,23 @@
-'use client'
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { Droplet, Menu, X } from 'lucide-react'
+import { useState } from "react";
+import Link from "next/link";
+import { Droplet, Menu, X } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 
-import { useNavigation } from "../hooks/use-navigation"
+const NAV_ITEMS = [
+  { name: "Daily Sales", href: "/sales-list" },
+  { name: "Live Stock", href: "/sales-list" },
+  { name: "Create Sale", href: "/sales" },
+  { name: "Logout", href: "/login" },
+] as const;
 
 function Navigation() {
-  const { activeSection, handleNavigation, NAV_ITEMS } = useNavigation()
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
 
+  console.log("path", pathname);
   return (
     <nav className="sticky top-0 z-40 w-full border-b bg-white shadow-sm">
       <div className="w-full px-4 sm:px-6 lg:px-8">
@@ -27,11 +35,11 @@ function Navigation() {
               {NAV_ITEMS.map((item) => (
                 <button
                   key={item.name}
-                  onClick={() => handleNavigation(item)}
+                  onClick={() => router.push(item.href)}
                   className={`rounded-md px-3 py-2 text-sm font-medium ${
-                    activeSection === item.name.toLowerCase().replace(' ', '-')
-                      ? 'bg-blue-100 text-blue-700'
-                      : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                    pathname === item.href
+                      ? "bg-blue-100 text-blue-700"
+                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                   }`}
                 >
                   {item.name}
@@ -63,13 +71,13 @@ function Navigation() {
               <button
                 key={item.name}
                 onClick={() => {
-                  handleNavigation(item)
-                  setIsMobileMenuOpen(false)
+                  setIsMobileMenuOpen(false);
+                  router.push(item.href);
                 }}
                 className={`block w-full rounded-md px-3 py-2 text-base font-medium ${
-                  activeSection === item.name.toLowerCase().replace(' ', '-')
-                    ? 'bg-blue-100 text-blue-700'
-                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                  pathname === item.href
+                    ? "bg-blue-100 text-blue-700"
+                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                 }`}
               >
                 {item.name}
@@ -79,7 +87,7 @@ function Navigation() {
         </div>
       )}
     </nav>
-  )
+  );
 }
 
-export default Navigation
+export default Navigation;

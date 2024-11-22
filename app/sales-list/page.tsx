@@ -6,11 +6,10 @@ import Navbar from "../components/navbar";
 import { useRouter } from "next/navigation";
 import { getLiveLubeStock } from "../actions/sales";
 import { LiveStock } from "../types/live_stock";
+import Loading from "../components/Loading";
 
 export default function LubricantSalesDashboard() {
-
   const router = useRouter();
-
   const [salesData, setSalesData] = useState([] as LiveStock[]);
   const [filteredData, setFilteredData] = useState(salesData);
   const [startDate, setStartDate] = useState("");
@@ -28,7 +27,6 @@ export default function LubricantSalesDashboard() {
     }
     setToken(token || "");
   }, [router]);
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -63,23 +61,9 @@ export default function LubricantSalesDashboard() {
     setSortDirection(sortDirection === "asc" ? "desc" : "asc");
   };
 
-  // const formatDate = (dateString: string) => {
-  //   return new Date(dateString).toLocaleDateString("en-US", {
-  //     year: "numeric",
-  //     month: "short",
-  //     day: "numeric",
-  //   });
-  // };
-
-  // const formatDateTime = (dateTimeString: string) => {
-  //   return new Date(dateTimeString).toLocaleString("en-US", {
-  //     year: "numeric",
-  //     month: "short",
-  //     day: "numeric",
-  //     hour: "2-digit",
-  //     minute: "2-digit",
-  //   });
-  // };
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-purple-100 [&_.group:hover_.absolute]:visible [&_.group:hover_.absolute]:opacity-100">
@@ -121,76 +105,72 @@ export default function LubricantSalesDashboard() {
                       </button>
                     </div>
                   </div>
-                  {isLoading ? (
-                    <div className="flex justify-center items-center h-64">
-                      <Loader2 className="h-8 w-8 text-blue-600 animate-spin" />
-                    </div>
-                  ) : error ? (
-                    <div className="text-center text-red-600">{error}</div>
-                  ) : (
-                    <div className="overflow-x-auto">
-                      <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
-                          <tr>
-                            {[
-                              "Product Name",
-                              "Product Price",
-                              "Quantity",
-                              "Total Price",
-                              // "Date",
-                              // "Updated At",
-                            ].map((header) => (
-                              <th
-                                key={header}
-                                scope="col"
-                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                                onClick={() =>
-                                  handleSort(
-                                    header.toLowerCase().replace(" ", "_")
-                                  )
-                                }
-                              >
-                                <div className="flex items-center">
-                                  {header}
-                                  {sortColumn ===
-                                    header.toLowerCase().replace(" ", "_") &&
-                                    (sortDirection === "asc" ? (
-                                      <ChevronUp className="h-4 w-4 ml-1" />
-                                    ) : (
-                                      <ChevronDown className="h-4 w-4 ml-1" />
-                                    ))}
-                                </div>
-                              </th>
-                            ))}
-                          </tr>
-                        </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
-                          {filteredData.map((item) => (
-                            <tr key={item.product_id} className="hover:bg-gray-50">
-                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                {item.product_name}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          {[
+                            "Product Name",
+                            "Product Price",
+                            "Quantity",
+                            "Total Price",
+                            // "Date",
+                            // "Updated At",
+                          ].map((header) => (
+                            <th
+                              key={header}
+                              scope="col"
+                              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                              onClick={() =>
+                                handleSort(
+                                  header.toLowerCase().replace(" ", "_")
+                                )
+                              }
+                            >
+                              <div className="flex items-center">
+                                {header}
+                                {sortColumn ===
+                                  header.toLowerCase().replace(" ", "_") &&
+                                  (sortDirection === "asc" ? (
+                                    <ChevronUp className="h-4 w-4 ml-1" />
+                                  ) : (
+                                    <ChevronDown className="h-4 w-4 ml-1" />
+                                  ))}
+                              </div>
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {filteredData.map((item) => (
+                          <tr
+                            key={item.product_id}
+                            className="hover:bg-gray-50"
+                          >
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                              {item.product_name}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                               ₹{item.price_per_item.toFixed(2)}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                               {item.remaining_stock}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                               ₹{item.total_value}
-                              </td>
-                              {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            </td>
+                            {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 {formatDate(item.date)}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 {formatDateTime(item.updated_at)}
                               </td> */}
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>

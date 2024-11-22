@@ -7,6 +7,7 @@ import { getActiveLubeProducts } from "../actions/products";
 import { useRouter } from "next/navigation";
 import { LubeProduct } from "../types/products";
 import { handleSalesCreate } from "../actions/sales";
+import Loading from "../components/Loading";
 
 export default function LubricantSalesForm() {
 
@@ -72,12 +73,6 @@ export default function LubricantSalesForm() {
     }
   };
 
-  // if (isLoading) {
-  //   return (
-  //     pass
-  //   );
-  // }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-purple-100">
       <Navbar />
@@ -93,12 +88,7 @@ export default function LubricantSalesForm() {
         {
           // turnery operator
           isLoading ? (
-            <div className="fixed inset-0 bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
-        <div className="bg-white p-8 rounded-xl shadow-2xl flex flex-col items-center">
-          <Loader2 className="h-12 w-12 text-blue-600 animate-spin" />
-          <p className="mt-4 text-lg font-semibold text-gray-700">Loading...</p>
-        </div>
-      </div>
+            <Loading/>
           ) : (
             <main>
             <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
