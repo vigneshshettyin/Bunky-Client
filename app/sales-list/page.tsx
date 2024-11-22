@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Navbar from "../components/navbar";
+import Navbar from "../components/Navigation";
 import { useRouter } from "next/navigation";
 import { getLiveLubeStock } from "../actions/live-stock";
 import { LiveStock } from "../types/live-stock";
-import Loading from "../components/loading";
+import Loading from "../components/Loading";
 
 export default function LubricantLiveStock() {
   const router = useRouter();

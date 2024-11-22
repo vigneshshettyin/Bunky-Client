@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { Loader2 } from "lucide-react";
-import Navbar from "../components/navbar";
+import Navbar from "../components/Navigation";
 import { getActiveLubeProducts } from "../actions/products";
 import { useRouter } from "next/navigation";
 import { LubeProduct } from "../types/products";
 import { handleSalesCreate } from "../actions/sales";
-import Loading from "../components/loading";
+import Loading from "../components/Loading";
 
 export default function LubricantSalesForm() {
 
