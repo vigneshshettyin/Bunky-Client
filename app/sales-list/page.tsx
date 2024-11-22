@@ -3,58 +3,13 @@
 import { useState, useEffect } from "react";
 import { ChevronDown, ChevronUp, Search, Loader2 } from "lucide-react";
 import Navbar from "../components/navbar";
-
-// Mock data for demonstration
-const mockData = [
-  {
-    id: 1,
-    product_name: "Motor Oil",
-    product_price: 25.99,
-    quantity: 5,
-    total_price: 129.95,
-    date: "2023-05-01",
-    updated_at: "2023-05-01T10:30:00Z",
-  },
-  {
-    id: 2,
-    product_name: "Transmission Fluid",
-    product_price: 15.5,
-    quantity: 3,
-    total_price: 46.5,
-    date: "2023-05-02",
-    updated_at: "2023-05-02T14:45:00Z",
-  },
-  {
-    id: 3,
-    product_name: "Brake Fluid",
-    product_price: 10.75,
-    quantity: 2,
-    total_price: 21.5,
-    date: "2023-05-03",
-    updated_at: "2023-05-03T09:15:00Z",
-  },
-  {
-    id: 4,
-    product_name: "Grease",
-    product_price: 8.99,
-    quantity: 10,
-    total_price: 89.9,
-    date: "2023-05-04",
-    updated_at: "2023-05-04T16:20:00Z",
-  },
-  {
-    id: 5,
-    product_name: "Motor Oil",
-    product_price: 25.99,
-    quantity: 2,
-    total_price: 51.98,
-    date: "2023-05-05",
-    updated_at: "2023-05-05T11:00:00Z",
-  },
-];
+import { redirect } from "next/navigation";
+import { getLiveLubeStock } from "../actions/sales";
+import { LiveStock } from "../types/live_stock";
 
 export default function LubricantSalesDashboard() {
-  const [salesData, setSalesData] = useState(mockData);
+
+  const [salesData, setSalesData] = useState([] as LiveStock[]);
   const [filteredData, setFilteredData] = useState(salesData);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -62,15 +17,27 @@ export default function LubricantSalesDashboard() {
   const [sortDirection, setSortDirection] = useState("asc");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [token, setToken] = useState("");
+
   useEffect(() => {
-    // Simulate API call to fetch data
+    const token = localStorage.getItem("token");
+    if (!token) {
+      redirect("/login");
+    }
+    setToken(token);
+  }, []);
+
+
+  useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        // In a real application, you would fetch data from an API here
-        await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API delay
-        setSalesData(mockData);
-        setFilteredData(mockData);
+        getLiveLubeStock(token).then((data) => {
+          if (data) {
+            setSalesData(data);
+            setFilteredData(data);
+          }
+        });
       } catch (err) {
         setError("Failed to fetch data. Please try again.");
         console.error(err);
@@ -80,7 +47,7 @@ export default function LubricantSalesDashboard() {
     };
 
     fetchData();
-  }, []);
+  }, [token]);
 
   const handleDateFilter = () => {
     // API call to filter data
@@ -94,23 +61,23 @@ export default function LubricantSalesDashboard() {
     setSortDirection(sortDirection === "asc" ? "desc" : "asc");
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
+  // const formatDate = (dateString: string) => {
+  //   return new Date(dateString).toLocaleDateString("en-US", {
+  //     year: "numeric",
+  //     month: "short",
+  //     day: "numeric",
+  //   });
+  // };
 
-  const formatDateTime = (dateTimeString: string) => {
-    return new Date(dateTimeString).toLocaleString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
+  // const formatDateTime = (dateTimeString: string) => {
+  //   return new Date(dateTimeString).toLocaleString("en-US", {
+  //     year: "numeric",
+  //     month: "short",
+  //     day: "numeric",
+  //     hour: "2-digit",
+  //     minute: "2-digit",
+  //   });
+  // };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-purple-100 [&_.group:hover_.absolute]:visible [&_.group:hover_.absolute]:opacity-100">
@@ -168,8 +135,8 @@ export default function LubricantSalesDashboard() {
                               "Product Price",
                               "Quantity",
                               "Total Price",
-                              "Date",
-                              "Updated At",
+                              // "Date",
+                              // "Updated At",
                             ].map((header) => (
                               <th
                                 key={header}
@@ -197,25 +164,25 @@ export default function LubricantSalesDashboard() {
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
                           {filteredData.map((item) => (
-                            <tr key={item.id} className="hover:bg-gray-50">
+                            <tr key={item.product_id} className="hover:bg-gray-50">
                               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                 {item.product_name}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                ${item.product_price.toFixed(2)}
+                              ₹{item.price_per_item.toFixed(2)}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {item.quantity}
+                              {item.remaining_stock}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                ${item.total_price.toFixed(2)}
+                              ₹{item.total_value}
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 {formatDate(item.date)}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 {formatDateTime(item.updated_at)}
-                              </td>
+                              </td> */}
                             </tr>
                           ))}
                         </tbody>

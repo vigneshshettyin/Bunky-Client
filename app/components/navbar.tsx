@@ -4,7 +4,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 const Navbar = () => {
-  const [activeSection, setActiveSection] = useState("daily-sales");
+  const [activeSection, setActiveSection] = useState("create-sale");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
@@ -33,11 +33,16 @@ const Navbar = () => {
                   } px-3 py-2`}
                   onClick={() => {
                     const section = item.toLowerCase().replace(" ", "-");
+                    setActiveSection(section);
                     if (section === "logout") {
                       localStorage.removeItem("token");
                       redirect("/login");
-                    } else {
-                      setActiveSection(section);
+                    } else if (section === "create-sale") {
+                      redirect("/sales");
+                    } else if (section === "daily-sales") {
+                      redirect("/sales-list");
+                    } else if (section === "live-stock") {
+                      redirect("/sales-list");
                     }
                   }}
                 >
@@ -68,7 +73,7 @@ const Navbar = () => {
       {isMobileMenuOpen && (
         <div className="sm:hidden bg-white shadow-md">
           <div className="pt-2 pb-3 space-y-1">
-            {["Daily Sales", "Live Stock", "Create Sale"].map((item) => (
+            {["Daily Sales", "Live Stock", "Create Sale", "Logout"].map((item) => (
               <Link
                 key={item}
                 href="#"
@@ -79,12 +84,18 @@ const Navbar = () => {
                 } text-base font-medium`}
                 onClick={() => {
                   const section = item.toLowerCase().replace(" ", "-");
+                  setActiveSection(section);
+                  setIsMobileMenuOpen(false);
                   if (section === "logout") {
                     localStorage.removeItem("token");
                     redirect("/login");
+                  } else if (section === "create-sale") {
+                    redirect("/sales");
+                  } else if (section === "daily-sales") {
+                    redirect("/sales-list");
+                  } else if (section === "live-stock") {
+                    redirect("/sales-list");
                   }
-                  setActiveSection(section);
-                  setIsMobileMenuOpen(false);
                 }}
               >
                 {item}

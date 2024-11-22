@@ -6,6 +6,7 @@ import Navbar from "../components/navbar";
 import { getActiveLubeProducts } from "../actions/products";
 import { redirect } from "next/navigation";
 import { LubeProduct } from "../types/products";
+import { handleSalesCreate } from "../actions/sales";
 
 export default function LubricantSalesForm() {
   const [product, setProduct] = useState("");
@@ -48,8 +49,18 @@ export default function LubricantSalesForm() {
 
     try {
       setIsLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setSuccess(true);
+      handleSalesCreate(token, parseInt(product), quantity, date).then((data) => {
+        if (data) {
+          setSuccess(true);
+          setIsLoading(false);
+        } else {
+          setError("Failed to submit data. Please try again.");
+        }
+      }
+      );
+      setProduct("");
+      setQuantity(0);
+      setDate("");
     } catch (err) {
       setError("Failed to submit data. Please try again.");
       console.error(err);
@@ -106,7 +117,7 @@ export default function LubricantSalesForm() {
                         onChange={(e) => setProduct(e.target.value)}
                       >
                         {products.map((product) => (
-                          <option key={product.code} value={product.name}>
+                          <option key={product.id} value={product.id}>
                             {product.name}
                           </option>
                         ))}

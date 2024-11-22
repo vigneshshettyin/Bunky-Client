@@ -1,8 +1,8 @@
 export interface LubeProduct {
+    id: number;
     code: string;
     name: string;
     price: string;
-    created_at: string;
     updated_at: string;
 }
 
