@@ -3,11 +3,13 @@
 import { useState, useEffect } from "react";
 import { ChevronDown, ChevronUp, Search, Loader2 } from "lucide-react";
 import Navbar from "../components/navbar";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { getLiveLubeStock } from "../actions/sales";
 import { LiveStock } from "../types/live_stock";
 
 export default function LubricantSalesDashboard() {
+
+  const router = useRouter();
 
   const [salesData, setSalesData] = useState([] as LiveStock[]);
   const [filteredData, setFilteredData] = useState(salesData);
@@ -22,10 +24,10 @@ export default function LubricantSalesDashboard() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      redirect("/login");
+      router.push("/login");
     }
-    setToken(token);
-  }, []);
+    setToken(token || "");
+  }, [router]);
 
 
   useEffect(() => {

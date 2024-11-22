@@ -3,16 +3,19 @@
 import { useState, useEffect } from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { handleUserLogin } from "../actions/login";
-import { redirect } from "next/navigation";
 import { Toaster, toast } from "sonner";
+import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
+
+  const router = useRouter();
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      redirect("/sales");
+      router.push("/sales");
     }
-  }, []);
+  }, [router]);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -48,7 +51,7 @@ export default function LoginPage() {
       if (token) {
         toast.success("Login successful!");
         localStorage.setItem("token", token);
-        redirect("/sales");
+        router.push("/sales");
       } else {
         setError("Invalid email or password. Please try again.");
       }

@@ -1,62 +1,49 @@
-import { useState } from "react";
-import { Droplet, Menu, X } from "lucide-react";
-import Link from "next/link";
-import { redirect } from "next/navigation";
+'use client'
 
-const Navbar = () => {
-  const [activeSection, setActiveSection] = useState("create-sale");
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+import { useState } from "react"
+import Link from "next/link"
+import { Droplet, Menu, X } from 'lucide-react'
+
+import { useNavigation } from "../hooks/use-navigation"
+
+function Navigation() {
+  const { activeSection, handleNavigation, NAV_ITEMS } = useNavigation()
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   return (
-    <nav className="bg-white shadow-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo and Title */}
-          <div className="flex items-center space-x-2">
-            <Droplet className="h-8 w-8 text-blue-600" />
-            <span className="text-xl font-bold text-gray-900">
-              RSS Buddy v2
-            </span>
+    <nav className="sticky top-0 z-40 w-full border-b bg-white shadow-sm">
+      <div className="w-full px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between">
+          <div className="flex items-center">
+            <Link href="/" className="flex items-center space-x-2">
+              <Droplet className="h-6 w-6 text-blue-600" />
+              <span className="text-xl font-bold text-gray-900">
+                RSS Buddy v2
+              </span>
+            </Link>
           </div>
-
-          {/* Desktop Navigation */}
-          <div className="hidden sm:flex sm:items-center sm:space-x-8">
-            {["Daily Sales", "Live Stock", "Create Sale", "Logout"].map(
-              (item) => (
-                <Link
-                  key={item}
-                  href="#"
-                  className={`text-sm font-medium ${
-                    activeSection === item.toLowerCase().replace(" ", "-")
-                      ? "text-blue-600 border-b-2 border-blue-600"
-                      : "text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                  } px-3 py-2`}
-                  onClick={() => {
-                    const section = item.toLowerCase().replace(" ", "-");
-                    setActiveSection(section);
-                    if (section === "logout") {
-                      localStorage.removeItem("token");
-                      redirect("/login");
-                    } else if (section === "create-sale") {
-                      redirect("/sales");
-                    } else if (section === "daily-sales") {
-                      redirect("/sales-list");
-                    } else if (section === "live-stock") {
-                      redirect("/sales-list");
-                    }
-                  }}
+          <div className="hidden md:block">
+            <div className="ml-10 flex items-baseline space-x-4">
+              {NAV_ITEMS.map((item) => (
+                <button
+                  key={item.name}
+                  onClick={() => handleNavigation(item)}
+                  className={`rounded-md px-3 py-2 text-sm font-medium ${
+                    activeSection === item.name.toLowerCase().replace(' ', '-')
+                      ? 'bg-blue-100 text-blue-700'
+                      : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                  }`}
                 >
-                  {item}
-                </Link>
-              )
-            )}
+                  {item.name}
+                </button>
+              ))}
+            </div>
           </div>
-
-          {/* Mobile Menu Toggle */}
-          <div className="sm:hidden">
+          <div className="md:hidden">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+              className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+              aria-expanded={isMobileMenuOpen}
             >
               <span className="sr-only">Open main menu</span>
               {isMobileMenuOpen ? (
@@ -69,43 +56,30 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Navigation */}
       {isMobileMenuOpen && (
-        <div className="sm:hidden bg-white shadow-md">
-          <div className="pt-2 pb-3 space-y-1">
-            {["Daily Sales", "Live Stock", "Create Sale", "Logout"].map((item) => (
-              <Link
-                key={item}
-                href="#"
-                className={`block pl-3 pr-4 py-2 border-l-4 ${
-                  activeSection === item.toLowerCase().replace(" ", "-")
-                    ? "border-blue-600 text-blue-600 bg-blue-50"
-                    : "border-transparent text-gray-500 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300"
-                } text-base font-medium`}
+        <div className="md:hidden">
+          <div className="space-y-1 px-2 pb-3 pt-2 sm:px-3">
+            {NAV_ITEMS.map((item) => (
+              <button
+                key={item.name}
                 onClick={() => {
-                  const section = item.toLowerCase().replace(" ", "-");
-                  setActiveSection(section);
-                  setIsMobileMenuOpen(false);
-                  if (section === "logout") {
-                    localStorage.removeItem("token");
-                    redirect("/login");
-                  } else if (section === "create-sale") {
-                    redirect("/sales");
-                  } else if (section === "daily-sales") {
-                    redirect("/sales-list");
-                  } else if (section === "live-stock") {
-                    redirect("/sales-list");
-                  }
+                  handleNavigation(item)
+                  setIsMobileMenuOpen(false)
                 }}
+                className={`block w-full rounded-md px-3 py-2 text-base font-medium ${
+                  activeSection === item.name.toLowerCase().replace(' ', '-')
+                    ? 'bg-blue-100 text-blue-700'
+                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                }`}
               >
-                {item}
-              </Link>
+                {item.name}
+              </button>
             ))}
           </div>
         </div>
       )}
     </nav>
-  );
-};
+  )
+}
 
-export default Navbar;
+export default Navigation
