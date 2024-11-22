@@ -7,7 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 
 const NAV_ITEMS = [
   { name: "Daily Sales", href: "/sales-list" },
-  { name: "Live Stock", href: "/sales-list" },
+  { name: "Live Stock", href: "/live-stock" },
   { name: "Create Sale", href: "/sales" },
   { name: "Logout", href: "/login" },
 ] as const;
@@ -17,7 +17,6 @@ function Navigation() {
   const pathname = usePathname();
   const router = useRouter();
 
-  console.log("path", pathname);
   return (
     <nav className="sticky top-0 z-40 w-full border-b bg-white shadow-sm">
       <div className="w-full px-4 sm:px-6 lg:px-8">

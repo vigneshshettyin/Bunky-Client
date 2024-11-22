@@ -7,7 +7,7 @@ import { getActiveLubeProducts } from "../actions/products";
 import { useRouter } from "next/navigation";
 import { LubeProduct } from "../types/products";
 import { handleSalesCreate } from "../actions/sales";
-import Loading from "../components/Loading";
+import Loading from "../components/loading";
 
 export default function LubricantSalesForm() {
 
