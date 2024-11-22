@@ -3,13 +3,13 @@
 import { useState, useEffect } from "react";
 import Navbar from "../components/Navigation";
 import { useRouter } from "next/navigation";
-import { getLiveLubeStock } from "../actions/live-stock";
+import { getLubeLiveStock } from "../actions/products";
 import { LiveStock } from "../types/live-stock";
 import Loading from "../components/Loading";
 
 export default function LubricantLiveStock() {
   const router = useRouter();
-  const [liveStock, setliveStock] = useState([] as LiveStock[]);
+  const [liveStock, setLiveStock] = useState([] as LiveStock[]);
   const [isLoading, setIsLoading] = useState(true);
   const [token, setToken] = useState("");
 
@@ -25,9 +25,9 @@ export default function LubricantLiveStock() {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        getLiveLubeStock(token).then((data) => {
+        getLubeLiveStock(token).then((data) => {
           if (data) {
-            setliveStock(data);
+            setLiveStock(data);
           }
         });
       } catch (err) {
