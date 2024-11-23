@@ -9,7 +9,7 @@ const NAV_ITEMS = [
   { name: "Daily Sales", href: "/sales-list" },
   { name: "Live Stock", href: "/live-stock" },
   { name: "Create Sale", href: "/sales" },
-  { name: "Logout", href: "/login" },
+  { name: "Logout", href: "/logout" },
 ] as const;
 
 function Navigation() {
@@ -34,7 +34,14 @@ function Navigation() {
               {NAV_ITEMS.map((item) => (
                 <button
                   key={item.name}
-                  onClick={() => router.push(item.href)}
+                  onClick={() => {
+                    if (item.href === "/logout") {
+                      localStorage.removeItem("token");
+                      router.push("/login");
+                    } else {
+                      router.push(item.href);
+                    }
+                  }}
                   className={`rounded-md px-3 py-2 text-sm font-medium ${
                     pathname === item.href
                       ? "bg-blue-100 text-blue-700"
@@ -70,8 +77,13 @@ function Navigation() {
               <button
                 key={item.name}
                 onClick={() => {
+                  if (item.href === "/logout") {
+                    localStorage.removeItem("token");
+                    router.push("/login");
+                  } else {
+                    router.push(item.href);
+                  }
                   setIsMobileMenuOpen(false);
-                  router.push(item.href);
                 }}
                 className={`block w-full rounded-md px-3 py-2 text-base font-medium ${
                   pathname === item.href
