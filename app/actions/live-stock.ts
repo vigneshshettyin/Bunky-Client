@@ -1,9 +1,11 @@
 "use server";
 import { BASE_API_URL } from "../constants";
-import { LubeProductResponse } from "../types/products";
+import { LiveStockResponse } from "../types/live-stock";
 
-const getActiveLubeProducts = async (token: string) => {
-  const API_URL = BASE_API_URL + "products/?is_fuel=False";
+const getLubeLiveStock = async (
+  token: string
+): Promise<LiveStockResponse | null> => {
+  const API_URL = BASE_API_URL + "lube-live-stock/";
 
   try {
     const response = await fetch(API_URL, {
@@ -14,7 +16,8 @@ const getActiveLubeProducts = async (token: string) => {
       },
     });
 
-    const data: LubeProductResponse = await response.json();
+    const data: LiveStockResponse = await response.json();
+    console.log(data);
     if (response.ok) {
       return data;
     } else {
@@ -26,4 +29,4 @@ const getActiveLubeProducts = async (token: string) => {
   }
 };
 
-export { getActiveLubeProducts };
+export { getLubeLiveStock };

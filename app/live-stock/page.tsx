@@ -1,35 +1,32 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Navbar from "../components/Navigation";
 import { useRouter } from "next/navigation";
-import { getLubeLiveStock } from "../actions/products";
+import { getLubeLiveStock } from "../actions/live-stock";
 import { LiveStock } from "../types/live-stock";
+import Navbar from "../components/Navigation";
 import Loading from "../components/Loading";
 
 export default function LubricantLiveStock() {
   const router = useRouter();
-  const [liveStock, setLiveStock] = useState([] as LiveStock[]);
+  const [liveStock, setLiveStock] = useState<LiveStock[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [token, setToken] = useState("");
+  const [totalLubeValue, setTotalLubeValue] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
       router.push("/login");
+      return;
     }
-    setToken(token || "");
-  }, [router]);
 
-  useEffect(() => {
     const fetchData = async () => {
       try {
-        setIsLoading(true);
-        getLubeLiveStock(token).then((data) => {
-          if (data) {
-            setLiveStock(data);
-          }
-        });
+        const data = await getLubeLiveStock(token);
+        if (data) {
+          setLiveStock(data.results);
+          setTotalLubeValue(data.total_value);
+        }
       } catch (err) {
         console.error(err);
       } finally {
@@ -38,10 +35,10 @@ export default function LubricantLiveStock() {
     };
 
     fetchData();
-  }, [token]);
+  }, [router]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-purple-100 [&_.group:hover_.absolute]:visible [&_.group:hover_.absolute]:opacity-100">
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-purple-100">
       <Navbar />
       <div className="py-10">
         <header>
@@ -51,15 +48,19 @@ export default function LubricantLiveStock() {
             </h1>
           </div>
         </header>
-        {isLoading ? (
-          <Loading />
-        ) : (
-          <main>
-            <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-              <div className="px-4 py-8 sm:px-0">
-                <div className="bg-white rounded-lg shadow overflow-hidden">
-                  <div className="px-4 py-5 sm:p-6">
+        <main>
+          <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div className="px-4 py-8 sm:px-0">
+              <div className="bg-white rounded-lg shadow overflow-hidden">
+                <div className="px-4 py-5 sm:p-6">
+                  {isLoading ? (
+                    <Loading />
+                  ) : (
                     <div className="overflow-x-auto">
+                      <div className="mb-4">
+                        <span className="font-bold text-black">Total Value:</span> 
+                        <span className="ml-2 text-black">₹{totalLubeValue}</span>
+                      </div>
                       <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                           <tr>
@@ -104,12 +105,12 @@ export default function LubricantLiveStock() {
                         </tbody>
                       </table>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
             </div>
-          </main>
-        )}
+          </div>
+        </main>
       </div>
     </div>
   );
