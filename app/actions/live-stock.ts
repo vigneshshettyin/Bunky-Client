@@ -17,7 +17,6 @@ const getLubeLiveStock = async (
     });
 
     const data: LiveStockResponse = await response.json();
-    console.log(data);
     if (response.ok) {
       return data;
     } else {
