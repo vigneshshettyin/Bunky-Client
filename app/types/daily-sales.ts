@@ -3,6 +3,7 @@ export interface DailySalesRequest {
   endDate: string;
   page: number;
   pageSize: number;
+  product?: number;
 }
 
 export interface DailySales {

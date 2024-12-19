@@ -4,8 +4,10 @@ import { useState, useEffect } from "react";
 import Navbar from "../components/Navigation";
 import { useRouter } from "next/navigation";
 import { getDailySalesStock } from "../actions/daily-sales";
+import { getActiveLubeProducts } from "../actions/products";
 import { DailySales } from "../types/daily-sales";
 import Loading from "../components/Loading";
+import { LubeProduct } from "../types/products";
 
 export default function LubricantLiveStock() {
   const router = useRouter();
@@ -15,8 +17,10 @@ export default function LubricantLiveStock() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(25);
+  const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
+  const [product, setProduct] = useState("");
+  const [products, setProducts] = useState([] as LubeProduct[]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -26,16 +30,25 @@ export default function LubricantLiveStock() {
     setToken(token || "");
   }, [router]);
 
+
+
   useEffect(() => {
     const fetchData = async () => {
       if (!token) return; // Ensure the token exists
       setIsLoading(true);
       try {
+        getActiveLubeProducts(token).then((data) => {
+          if (data) {
+            setProducts(data.results);
+          }
+        });
+
         const data = await getDailySalesStock(token, {
           startDate,
           endDate,
           page,
           pageSize,
+          product: product ? parseInt(product) : undefined,
         });
         if (data) {
           const totalItems = data.count;
@@ -51,7 +64,7 @@ export default function LubricantLiveStock() {
     };
 
     fetchData();
-  }, [token, startDate, endDate, page, pageSize]);
+  }, [token, startDate, endDate, page, pageSize, product]);
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
@@ -93,6 +106,22 @@ export default function LubricantLiveStock() {
                       placeholder="End Date"
                       className="w-full sm:w-auto px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
                     />
+                                          <div>
+                        <select
+                          id="product"
+                          name="product"
+                          required
+                          className="w-full h-full sm:w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
+                          value={product}
+                          onChange={(e) => setProduct(e.target.value)}
+                        >
+                          {products.map((product) => (
+                            <option key={product.id} value={product.id}>
+                              {product.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                   </div>
                   {isLoading ? (
                     <Loading />

@@ -3,7 +3,7 @@ import { BASE_API_URL } from "../constants";
 import { LubeProductResponse } from "../types/products";
 
 const getActiveLubeProducts = async (token: string) => {
-  const API_URL = BASE_API_URL + "products/?is_fuel=False";
+  const API_URL = BASE_API_URL + "products/?is_fuel=False&page_size=100";
 
   try {
     const response = await fetch(API_URL, {

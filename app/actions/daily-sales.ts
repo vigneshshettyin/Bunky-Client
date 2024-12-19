@@ -2,11 +2,13 @@
 import { BASE_API_URL } from "../constants";
 import { DailySalesRequest, DailySalesResponse } from "../types/daily-sales";
 
-
-
 const constructQuery = (req: DailySalesRequest) => {
-  const { startDate, endDate, page, pageSize } = req;
-  return `?start_date=${startDate}&end_date=${endDate}&page=${page}&page_size=${pageSize}`;
+  const { startDate, endDate, page, pageSize, product } = req;
+  const query_str = `?start_date=${startDate}&end_date=${endDate}&page=${page}&page_size=${pageSize}`;
+  if (product) {
+    return query_str + `&product=${product}`;
+  }
+  return query_str;
 };
 
 const getDailySalesStock = async (token: string, req: DailySalesRequest) => {
