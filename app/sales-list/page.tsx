@@ -30,8 +30,6 @@ export default function LubricantLiveStock() {
     setToken(token || "");
   }, [router]);
 
-
-
   useEffect(() => {
     const fetchData = async () => {
       if (!token) return; // Ensure the token exists
@@ -106,22 +104,25 @@ export default function LubricantLiveStock() {
                       placeholder="End Date"
                       className="w-full sm:w-auto px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
                     />
-                                          <div>
-                        <select
-                          id="product"
-                          name="product"
-                          required
-                          className="w-full h-full sm:w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
-                          value={product}
-                          onChange={(e) => setProduct(e.target.value)}
-                        >
-                          {products.map((product) => (
-                            <option key={product.id} value={product.id}>
-                              {product.name}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
+                    <div>
+                      <select
+                        id="product"
+                        name="product"
+                        required
+                        className="w-full h-full sm:w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
+                        value={product}
+                        onChange={(e) => setProduct(e.target.value)}
+                      >
+                        <option defaultValue={""} key={"plist"} value="">
+                          Select Product
+                        </option>
+                        {products.map((product) => (
+                          <option key={product.id} value={product.id}>
+                            {product.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
                   {isLoading ? (
                     <Loading />
